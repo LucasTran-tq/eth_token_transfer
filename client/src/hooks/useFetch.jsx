@@ -7,7 +7,7 @@ const useFetch = ({ keyword }) => {
 
   const fetchGifs = async () => {
     try {
-      const respone = await fetch(
+      const response = await fetch(
         `http://api.giphy.com/v1/gifs/search?api_key=${APIKEY}&&q=${keyword
           .split(" ")
           .join("")}&limit=1`

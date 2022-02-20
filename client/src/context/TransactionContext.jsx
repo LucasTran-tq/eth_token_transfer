@@ -37,32 +37,54 @@ export const TransactionProvider = ({ children }) => {
     setFormData((prevState) => ({ ...prevState, [name]: e.target.value }));
   };
 
-  // const getAllTransactions = async () => {
-  //   try {
-  //     if (ethereum) {
-  //       const transactionsContract = createEthereumContract();
+  const getAllTransactions = async () => {
+    try {
+      if (!ethereum) return alert("Please install MetaMask");
 
-  //       const availableTransactions = await transactionsContract.getAllTransactions();
+      const transactionContract = getEthereumContract();
+      const availableTransactions =
+        await transactionContract.getAllTransactions();
 
-  //       const structuredTransactions = availableTransactions.map((transaction) => ({
-  //         addressTo: transaction.receiver,
-  //         addressFrom: transaction.sender,
-  //         timestamp: new Date(transaction.timestamp.toNumber() * 1000).toLocaleString(),
-  //         message: transaction.message,
-  //         keyword: transaction.keyword,
-  //         amount: parseInt(transaction.amount._hex) / (10 ** 18)
-  //       }));
+      const structuredTransactions = availableTransactions.map(
+        (transaction) => ({
+          addressTo: transaction.receiver,
+          addressFrom: transaction.sender,
+          timestamp: new Date(
+            transaction.timestamp.toNumber() * 1000
+          ).toLocaleString(),
+          message: transaction.message,
+          keyword: transaction.keyword,
+          amount: parseInt(transaction.amount._hex) / 10 ** 18,
+          // url: transaction.,
+        })
+      );
 
-  //       console.log(structuredTransactions);
+      setTransactions(structuredTransactions);
+    } catch (error) {
+      console.log(error);
 
-  //       setTransactions(structuredTransactions);
-  //     } else {
-  //       console.log("Ethereum is not present");
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+      throw new Error("No ethereum object");
+    }
+  };
+
+  const checkIfTransactionsExists = async () => {
+    try {
+      if (ethereum) {
+        const transactionsContract = getEthereumContract();
+        const currentTransactionCount =
+          await transactionsContract.getTransactionCount();
+
+        window.localStorage.setItem(
+          "transactionCount",
+          currentTransactionCount
+        );
+      }
+    } catch (error) {
+      console.log(error);
+
+      throw new Error("No ethereum object");
+    }
+  };
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -72,7 +94,7 @@ export const TransactionProvider = ({ children }) => {
 
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
-        // getAllTransactions();
+        getAllTransactions();
       } else {
         console.log("No account found");
       }
@@ -91,6 +113,7 @@ export const TransactionProvider = ({ children }) => {
       });
 
       setCurrentAccount(accounts[0]);
+      window.location.reload();
     } catch (error) {
       console.error(error);
       throw new Error("No ethereum object");
@@ -133,7 +156,7 @@ export const TransactionProvider = ({ children }) => {
       const transactionCount = await transactionsContract.getTransactionCount();
       setTransactionCount(transactionCount.toNumber());
 
-      console.log(transactionCount);
+      window.location.reload();
     } catch (error) {
       console.error(error);
       throw new Error("No ethereum object");
@@ -142,16 +165,20 @@ export const TransactionProvider = ({ children }) => {
 
   useEffect(() => {
     checkIfWalletIsConnected();
+    checkIfTransactionsExists();
   }, []);
 
   return (
     <TransactionContext.Provider
       value={{
+        transactionCount,
         connectWallet,
+        transactions,
         currentAccount,
-        formData,
+        isLoading,
         sendTransaction,
         handleChange,
+        formData,
       }}
     >
       {children}
