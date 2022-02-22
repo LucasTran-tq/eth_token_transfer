@@ -1,4 +1,4 @@
-# ETH-DBank application
+# ETH application
 
 
 ## Table of Contents
@@ -18,12 +18,12 @@ This is token transfer application using Ethereum Smart Contracts and Solidity
 
 
 ## Video Demo
-You can have a look ETH Bank application through [the video](https://www.youtube.com/watch?v=8hd0OkbUlQs).
+You can have a look ETH application through [the video](https://www.youtube.com/watch?v=8hd0OkbUlQs).
 
 ![demo](client/images/demo.jpg)
 
 ## Technologies Used
-ETH-DBank application use the following technologies, frameworks and development techniques:
+ETH application use the following technologies, frameworks and development techniques:
 
 Ethereum Smart Contracts and Solidity
 - Hardhat
