@@ -1,4 +1,4 @@
-# ETH application
+# ETH - Token transfer application
 
 
 ## Table of Contents
